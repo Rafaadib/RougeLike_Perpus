@@ -42,6 +42,8 @@ endif()
 
 #asset
 file(COPY "${CMAKE_SOURCE_DIR}/RougeLike_Perpus/Asset" DESTINATION "${CMAKE_BINARY_DIR}")
+file(COPY "${CMAKE_SOURCE_DIR}/RougeLike_Perpus/Shader" DESTINATION "${CMAKE_BINARY_DIR}")
+file(COPY "${CMAKE_SOURCE_DIR}/RougeLike_Perpus/Font" DESTINATION "${CMAKE_BINARY_DIR}")
 
 #test
 message(STATUS "test ")

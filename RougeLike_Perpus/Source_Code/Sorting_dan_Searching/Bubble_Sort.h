@@ -2,6 +2,12 @@
 
 #pragma once
 
-#include <iostream>
-#include <cstdint>
-#include <string>
+#include "Struct_dan_Array/Buku.h"
+
+//class static
+class Bubble_Sort {
+public:
+	//buat fungsi static biar langusng di panggil tak usah buat object dari class ini
+	static void Urutkan_Berdasarkan_Id(Buku data_buku[], int32_t jumlah_buku);
+};
+
