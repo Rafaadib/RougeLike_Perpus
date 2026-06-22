@@ -101,7 +101,7 @@ void Perpus::Simpan_File(std::string nama_file) {
 		file << data_buku[i].id << ","
 			<< data_buku[i].judul << ","
 			<< data_buku[i].pengarang << ","
-			<< data_buku[i].b_tersedia << "'\n";
+			<< data_buku[i].b_tersedia << "\n";
 	}
 
 	file.close();

@@ -21,6 +21,7 @@ void Queue::EnQueue(Buku* buku_dipinjam) {
 	belakang = (belakang + 1) % MAX_ANTRIAN;
 	data_antrian[belakang] = buku_dipinjam;
 	jumlah++;
+	buku_dipinjam->b_tersedia = false;
 
 	std::cout << "[SUCCESS] Buku " << buku_dipinjam->judul << " Masuk Ke Slot" << std::endl;
 
@@ -38,6 +39,7 @@ Buku* Queue::DeQueue() {
 	//geser ke berikutnya
 	depan = (depan + 1) % MAX_ANTRIAN;
 	jumlah--;
+	buku_keluar->b_tersedia = true;
 
 	std::cout << "[SUCCES] Buku " << buku_keluar->judul << " Dikembalikan" << std::endl;
 	return buku_keluar;
