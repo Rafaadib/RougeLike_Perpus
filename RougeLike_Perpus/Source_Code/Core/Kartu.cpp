@@ -1,5 +1,6 @@
 
 #include "Kartu.h"
+#include "Struct_dan_Array/Buku.h"
 #include <iostream>
 
 Card::Card(Vector2 posisi, Buku* data_buku, float rotasi_awal) {
@@ -48,9 +49,9 @@ void Card::Update_Card() {
 		rotasi = base_rotasi + sin(GetTime() * 15.0f) * 5.0f;
 		posisi_sekarang.y = Lerp(posisi_sekarang.y, base_posisi.y - 30.0f, 0.1f);
 
-		if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+		/*if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
 			Burn();
-		}
+		}*/
 	}
 	else {
 		ukuran_target = 1.0f;
@@ -78,7 +79,7 @@ void Card::Update_Card() {
 
 }
 
-void Card::Draw_Card(Shader shader, Texture2D kartu) {
+void Card::Draw_Card(Shader shader, Texture2D kartu, Font font) {
 	if (progerss_hancur >= 1.0f) {
 		return;
 	}
@@ -110,6 +111,17 @@ void Card::Draw_Card(Shader shader, Texture2D kartu) {
 
 
 	EndShaderMode();
+
+	//tulisan judul,id dan penagrang
+	Vector2 pos_judul = { posisi_sekarang.x - 40.0f, posisi_sekarang.y - 60.0f };
+	Vector2 pos_id = { posisi_sekarang.x - 40.0f, posisi_sekarang.y - 20.0f };
+	Vector2 pos_pengarang = { posisi_sekarang.x - 40.0f, posisi_sekarang.y + 40.0f };
+
+	if (data != nullptr) {
+		DrawTextEx(font, data->judul.c_str(), pos_judul, 16 * ukuran_sekarang, 1, BLACK);
+		DrawTextEx(font, TextFormat("ID: % d", data->id), pos_id, 14 * ukuran_sekarang, 1, DARKGRAY);
+		DrawTextEx(font, data->pengarang.c_str(), pos_pengarang, 14 * ukuran_sekarang, 1, DARKGRAY);
+	}
 }
 
 void Card::Burn() {

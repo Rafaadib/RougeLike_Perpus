@@ -6,13 +6,19 @@
 
 class Asset_Manager;
 class Button;
+class Text_Box;
 
 enum class AKSI_UI {
 	NONE = 0,
 	TAMBAH_DATA,
 	HAPUS_DATA,
-	URUTKAN_ID,
-	UNDO_AKSI
+	UPDATE_DATA,
+	SHOW_DATA,
+	SEARCH,
+	PINJAM,
+	KEMBALIKAN,
+	SORT,
+	UNDO
 };
 
 
@@ -27,12 +33,31 @@ public:
 
 	//buton untuk CRUD
 	Button* btn_tambah;
+	Button* btn_show;
+	Button* btn_update;
 	Button* btn_hapus;
+	
+
+	//aksi lain seperti urutkan, undo, searching
 	Button* btn_sort;
 	Button* btn_undo;
+	Button* btn_search;
 
-	AKSI_UI Update_UI_Gameplay();
+	//pinjam dan kembalikan
+	Button* btn_pinjam;
+	Button* btn_kembalikan;
 
+	//text input
+	Text_Box* i_judul;
+	Text_Box* i_id;
+	Text_Box* i_pengarang;
+	void Update_ITextBox();
+
+	AKSI_UI Update_UI_CRUD();
+	AKSI_UI Update_UI_SUS();
+	AKSI_UI Update_UI_PK();
+
+	//untuk font 
 	Font mtfont;
 
 	//buton

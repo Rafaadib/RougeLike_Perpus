@@ -8,7 +8,7 @@ struct Buku;
 
 class Queue {
 public:
-	static const int MAX_ANTRIAN = 4;
+	static const int32_t MAX_ANTRIAN = 4;
 	Buku* data_antrian[MAX_ANTRIAN];
 
 	int32_t depan;

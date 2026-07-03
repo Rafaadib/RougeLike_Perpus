@@ -7,6 +7,12 @@
 #include <cstdint>
 
 #include "Struct_dan_Array/Buku.h"
+#include "Struct_dan_Array/Perpus.h"
+#include "Linked_list/linked_list.h"
+#include "Queue/Queue.h"
+#include "Stack/Stack.h"
+#include "Sorting_dan_Searching/Bubble_Sort.h"
+#include "Sorting_dan_Searching/Linear_Search.h"
 
 
 enum class GameState {
@@ -19,12 +25,11 @@ enum class GameState {
 class Asset_Manager;
 class UI_Manager;
 class Card;
-class Perpustakaan;
 
 
 class GameManager {
 public:
-	GameManager(const int32_t lebar_layar, const int32_t tinggi_layar, const char* judul);
+	GameManager(const uint32_t lebar_layar, const uint32_t tinggi_layar, const char* judul);
 	~GameManager(); //destrukutor
 
 	bool b_berjalan = true;
@@ -53,6 +58,9 @@ public:
 
 	float total_time = 0.0f;
 
+	//font
+	Font font;
+
 
 private:
 	void Update();
@@ -63,14 +71,19 @@ private:
 
 	Asset_Manager* Asset;
 	UI_Manager* UI;
-	Perpustakaan* perpustakaan;
+
+	//data
+	Perpus perpus_data;
+	Linked_List node_card;
+	Stack riwayat_hapus;
+	Queue slot_pinjam;
 
 	//array dan structnya
 	Buku data_buku[24];
 	int32_t jumlah_buku_tersimpan = 0;
 
-	Card* max_tambah_buku[8];
-	int32_t jumlah_buku_ditambahkan = 0;
+	Card* visual_card[8];
+	int32_t jumlah_buku_visual = 0;
 
 
 };

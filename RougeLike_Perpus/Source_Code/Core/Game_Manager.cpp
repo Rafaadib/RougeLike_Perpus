@@ -7,9 +7,8 @@
 #include "UI_Manager.h"
 #include "Kartu.h"
 
-#include "Struct_dan_Array/Perpus.h"
 
-GameManager::GameManager(const int32_t lebar_layar, const int32_t tinggi_layar, const char* judul)
+GameManager::GameManager(const uint32_t lebar_layar, const uint32_t tinggi_layar, const char* judul)
 	: lebar_layar(lebar_layar), tinggi_layar(tinggi_layar) {
 
 	/*SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_VSYNC_HINT);*/
@@ -18,15 +17,35 @@ GameManager::GameManager(const int32_t lebar_layar, const int32_t tinggi_layar, 
 	Asset = new Asset_Manager();
 	UI = new UI_Manager(Asset, lebar_layar, tinggi_layar);
 
-	data_buku[0] = Buku(101, "Bumi", "tere liye", true);
-	data_buku[1] = Buku(101, "Bumi", "tere liye", true);
-	data_buku[2] = Buku(101, "Bumi", "tere liye", true);
-	jumlah_buku_tersimpan = 3;
+	font = LoadFontEx("Font/mania.ttf", 32, nullptr, 0);
+	SetTextureFilter(font.texture, TEXTURE_FILTER_POINT);
+	
+	perpus_data.Baca_File("Data_Buku.txt");
 
-	max_tambah_buku[0] = new Card({ 380, 555 }, &data_buku[0], -10.0f);
-	max_tambah_buku[1] = new Card({ 470, 555 }, &data_buku[1], -8.0f);
-	max_tambah_buku[2] = new Card({ 560, 555 }, &data_buku[2], -6.0f);
-	jumlah_buku_ditambahkan = 3;
+	//jika file kosong
+	if (perpus_data.jumlah_buku == 0) {
+		perpus_data.Tambah_Buku(101, "Struktur C++", "Budi");
+		perpus_data.Tambah_Buku(102, "Raylib Basic", "Siti");
+		perpus_data.Tambah_Buku(103, "Game Dev", "Andi");
+	}
+
+	//max buku yang tampil
+	int32_t batas_visual = (perpus_data.jumlah_buku < 8) ? perpus_data.jumlah_buku : 8;
+	for (int32_t i = 0; i < batas_visual; i++) {
+		node_card.Tambah_Ke_Layar(&perpus_data.data_buku[i]);
+	}
+
+	//linked listnya
+	Buku* temp = node_card.head;
+	jumlah_buku_visual = 0;
+	float base_x = 380.0f;
+	while (temp != nullptr) {
+		float pos_x = base_x + (jumlah_buku_visual * 95.0f);
+
+		visual_card[jumlah_buku_visual] = new Card({ pos_x, 555 }, temp, -10.0f + (jumlah_buku_visual * 2.0f));
+		jumlah_buku_visual++;
+		temp = temp->next;
+	}
 
 	LoadAsset();
 
@@ -34,8 +53,13 @@ GameManager::GameManager(const int32_t lebar_layar, const int32_t tinggi_layar, 
 
 GameManager::~GameManager() {
 	//delete manual
-	for (int32_t i = 0; i < jumlah_buku_ditambahkan; i++) {
-		delete max_tambah_buku[i];
+	//simpan dulu sebelum dihapus
+	perpus_data.Simpan_File("Data_Buku.txt");
+
+	for (int32_t i = 0; i < jumlah_buku_visual; i++) {
+		if (visual_card[i] != nullptr) {
+			delete visual_card[i];
+		}
 	}
 	
 
@@ -52,6 +76,7 @@ void GameManager::LoadAsset() {
 	
 	Asset->Add_Texture("card", "Asset/card_book.png");
 	Asset->Add_Texture("back", "Asset/card_b.png");
+	Asset->Add_Texture("card1", "Asset/card.png");
 
 	Asset->Add_Shader("title", nullptr, "Shader/table.fs");
 	Asset->Add_Shader("table", nullptr, "Shader/table1.fs");
@@ -137,27 +162,55 @@ void GameManager::Update() {
 			total_time = (float)GetTime();
 			SetShaderValue(shader, timeloc, &total_time, SHADER_UNIFORM_FLOAT);
 
-			AKSI_UI aksi_crud = UI->Update_UI_Gameplay();
+			UI->Update_ITextBox();
+
+			//crud
+			AKSI_UI aksi_crud = UI->Update_UI_CRUD();
 			if (aksi_crud == AKSI_UI::TAMBAH_DATA) {
-				if (jumlah_buku_tersimpan < 24 && jumlah_buku_ditambahkan < 8) {
+				if (jumlah_buku_tersimpan < 24 && jumlah_buku_visual < 8) {
 					data_buku[jumlah_buku_tersimpan] = Buku(234, "buku baru", "perpus", true);
 
-					float pos_x = 380.0f + (jumlah_buku_ditambahkan * 90.0f);
-					max_tambah_buku[jumlah_buku_ditambahkan] = new Card({ pos_x, 555 }, &data_buku[jumlah_buku_tersimpan], 0.0f);
+					float pos_x = 380.0f + (jumlah_buku_visual * 90.0f);
+					visual_card[jumlah_buku_visual] = new Card({ pos_x, 555 }, &data_buku[jumlah_buku_tersimpan], 0.0f);
 
 					jumlah_buku_tersimpan++;
-					jumlah_buku_ditambahkan++;
+					jumlah_buku_visual++;
 				}
 			}
 			else if (aksi_crud == AKSI_UI::HAPUS_DATA) {
 				//logika hapus data
 			}
-			else if (aksi_crud == AKSI_UI::URUTKAN_ID) {
+			else if (aksi_crud == AKSI_UI::SHOW_DATA) {
 				//logika urutkan
 			}
+			else if (aksi_crud == AKSI_UI::UPDATE_DATA) {
+				//logika update
+			}
 
-			for (int32_t i = 0; i < jumlah_buku_ditambahkan; i++) {
-				max_tambah_buku[i]->Update_Card();
+			//search, sort, undo
+			AKSI_UI aksi_sus = UI->Update_UI_SUS();
+			if (aksi_sus == AKSI_UI::SORT) {
+				//logika sorting
+			}
+			else if (aksi_sus == AKSI_UI::UNDO) {
+				//logika undo
+			}
+			else if (aksi_sus == AKSI_UI::SEARCH) {
+				//logika searching
+			}
+
+			//pinjam dan kembalikan
+			AKSI_UI aksi_pk = UI->Update_UI_PK();
+			if (aksi_pk == AKSI_UI::PINJAM) {
+				//logika pinjam
+			}
+			else if (aksi_pk == AKSI_UI::KEMBALIKAN) {
+				//logika pinjam
+			}
+
+
+			for (int32_t i = 0; i < jumlah_buku_visual; i++) {
+				visual_card[i]->Update_Card();
 			}
 
 			break;
@@ -190,6 +243,8 @@ void GameManager::Draw() {
 					DrawTextureRec(target_kanvas.texture, sumber_tek, posisi_tujuan, WHITE);
 				EndShaderMode();
 
+				Texture2D card_menu = Asset->Get_Texture("card");
+				DrawTextureEx(card_menu, { 600, 200 }, 5.0f, 1.5f, WHITE);
 				UI->DrawMenu();
 				break;
 			}
@@ -210,13 +265,13 @@ void GameManager::Draw() {
 
 
 				// render kartu atau buku
-				Texture2D kartu_tex = Asset->Get_Texture("card");
+				Texture2D kartu_tex = Asset->Get_Texture("card1");
 				Texture2D back_card = Asset->Get_Texture("back");
 
 				Shader burn = Asset->Get_Shader("burn");
 					
-				for (int32_t i = 0; i < jumlah_buku_ditambahkan; i++) {
-						max_tambah_buku[i]->Draw_Card(burn, kartu_tex);
+				for (int32_t i = 0; i < jumlah_buku_visual; i++) {
+						visual_card[i]->Draw_Card(burn, kartu_tex, font);
 				}
 
 				//stack kartu
@@ -263,7 +318,7 @@ void GameManager::Draw() {
 			EndShaderMode();
 		}
 
-		DrawText(TextFormat("FPS: %i", GetFPS()), FPS::posisi_x, FPS::posisi_y, 20, RED);
+		DrawText(TextFormat("FPS: %i", GetFPS()), FPS::posisi_x, FPS::posisi_y, 20, WHITE);
 	EndTextureMode();
 
 	BeginDrawing();

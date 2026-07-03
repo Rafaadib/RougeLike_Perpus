@@ -28,7 +28,7 @@ public:
 	float progerss_hancur;
 
 	void Update_Card();
-	void Draw_Card(Shader shader, Texture2D kartu);
+	void Draw_Card(Shader shader, Texture2D kartu, Font font);
 	void Burn();
 
 private:
