@@ -49,9 +49,9 @@ void Card::Update_Card() {
 		rotasi = base_rotasi + sin(GetTime() * 15.0f) * 5.0f;
 		posisi_sekarang.y = Lerp(posisi_sekarang.y, base_posisi.y - 30.0f, 0.1f);
 
-		/*if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+		if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
 			Burn();
-		}*/
+		}
 	}
 	else {
 		ukuran_target = 1.0f;
