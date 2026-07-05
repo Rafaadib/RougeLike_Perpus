@@ -53,10 +53,10 @@ void Text_Box::Update_TextBox() {
 
 void Text_Box::Draw_TextBox(Font font) {
 	Color warna_bg = b_ketik ? WHITE : LIGHTGRAY;
-	DrawRectangleRec(batas, warna_bg);
+	DrawRectangleRounded(batas, 0.2f, 8, warna_bg);
 
 	Color warna_garis = b_ketik ? GOLD : DARKGRAY;
-	DrawRectangleLinesEx(batas, 2, warna_garis);
+	DrawRectangleRoundedLines(batas, 0.2f, 8, warna_bg);
 
 	Vector2 posisi_text = { batas.x + 10, batas.y + 10 };
 	DrawTextEx(font, text.c_str(), posisi_text, 24, 1, BLACK);
@@ -66,7 +66,7 @@ void Text_Box::Draw_TextBox(Font font) {
 		DrawLineEx(
 			{batas.x + 12 + lebar_text, batas.y + 5},
 			{batas.x + 12 + lebar_text, batas.y + 35},
-			3.0f, RED
+			2.0f, RED
 		);
 	}
 }

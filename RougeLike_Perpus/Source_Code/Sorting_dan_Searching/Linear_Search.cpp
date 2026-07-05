@@ -27,7 +27,7 @@ int32_t Linear_Search::Cari_Berdasarkan_Id(
     return -1;
 }
 
-int32_t Linear_Search::Cari_Berdasarkan_Pengarang(
+int32_t Linear_Search::Cari_Berdasarkan_Judul(
     Buku data_buku[],
     int32_t jumlah_buku,
     std::string judul

@@ -20,6 +20,7 @@ Card::Card(Vector2 posisi, Buku* data_buku, float rotasi_awal) {
 	b_hover = false;
 	b_tertarik = false;
 	b_burning = false;
+	b_toggle = false;
 	progerss_hancur = 0.0f;
 }
 
@@ -42,16 +43,21 @@ void Card::Update_Card() {
 	float idle_rotasi = base_rotasi + (sin(waktu * 2.0f) * 3.0f);
 	float idle_y_rotasi = base_posisi.y + (sin(waktu * 3.0f) * 4.0f);
 
-
-	if (b_hover && !b_burning) {
-		ukuran_target = 1.2f;
+	if (b_toggle && !b_burning) {
+		ukuran_target = 1.1f;
 
 		rotasi = base_rotasi + sin(GetTime() * 15.0f) * 5.0f;
-		posisi_sekarang.y = Lerp(posisi_sekarang.y, base_posisi.y - 30.0f, 0.1f);
+		posisi_sekarang.y = Lerp(posisi_sekarang.y, base_posisi.y - 45.0f, 0.1f);
+	}
+	else if (b_hover && !b_burning) {
+		ukuran_target = 1.05f;
 
-		if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-			Burn();
-		}
+		rotasi = base_rotasi + sin(GetTime() * 15.0f) * 5.0f;
+		posisi_sekarang.y = Lerp(posisi_sekarang.y, base_posisi.y - 15.0f, 0.1f);
+
+		//if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+		//	Burn();
+		//}
 	}
 	else {
 		ukuran_target = 1.0f;
@@ -60,11 +66,11 @@ void Card::Update_Card() {
 		posisi_sekarang.y = Lerp(posisi_sekarang.y, idle_y_rotasi, 0.1f);
 	}
 
-	if (IsKeyPressed(KEY_SPACE)) {
+	/*if (IsKeyPressed(KEY_SPACE)) {
 				b_burning = false;
 				progerss_hancur = 0.0f;
 				std::cout << "KARTU DI-RESET!" << std::endl;
-	}
+	}*/
 
 	if (b_burning) {
 		// Nilai 0.5f membuat proses kehancuran kartu memakan waktu 2 detik pas
@@ -75,6 +81,7 @@ void Card::Update_Card() {
 		}
 	}
 
+	posisi_sekarang.x = Lerp(posisi_sekarang.x, base_posisi.x, 0.1f);
 	ukuran_sekarang = Lerp(ukuran_sekarang, ukuran_target, 0.1f);
 
 }
@@ -118,9 +125,24 @@ void Card::Draw_Card(Shader shader, Texture2D kartu, Font font) {
 	Vector2 pos_pengarang = { posisi_sekarang.x - 40.0f, posisi_sekarang.y + 40.0f };
 
 	if (data != nullptr) {
-		DrawTextEx(font, data->judul.c_str(), pos_judul, 16 * ukuran_sekarang, 1, BLACK);
-		DrawTextEx(font, TextFormat("ID: % d", data->id), pos_id, 14 * ukuran_sekarang, 1, DARKGRAY);
-		DrawTextEx(font, data->pengarang.c_str(), pos_pengarang, 14 * ukuran_sekarang, 1, DARKGRAY);
+		float ukuran_font = 16.0f * ukuran_sekarang;
+
+		//judul
+		Vector2 ukuran_tjudul = MeasureTextEx(font, data->judul.c_str(), ukuran_font, 1);
+		Vector2 origin_tjudul = { ukuran_tjudul.x / 2.0f, (ukuran_tjudul.y / 2.0f) + 50.0f };
+		DrawTextPro(font, data->judul.c_str(), posisi_sekarang, origin_tjudul, rotasi, ukuran_font, 1, BLACK);
+
+		//id
+		const char* text_id = TextFormat("ID: %d", data->id);
+		Vector2 ukuran_tid = MeasureTextEx(font, text_id, ukuran_font, 1);
+		Vector2 origin_tid = { ukuran_tid.x / 2.0f, ukuran_tid.y / 2.0f };
+		DrawTextPro(font, text_id, posisi_sekarang, origin_tid, rotasi, ukuran_font, 1, BLACK);
+
+		//pengarang
+		Vector2 ukuran_tpengarang = MeasureTextEx(font, data->pengarang.c_str(), ukuran_font, 1);
+		Vector2 origin_tpengarang = { ukuran_tpengarang.x / 2.0f, (ukuran_tpengarang.y / 2.0f) - 50.0f };
+		DrawTextPro(font, data->pengarang.c_str(), posisi_sekarang, origin_tpengarang, rotasi, ukuran_font, 1, BLACK);
+
 	}
 }
 

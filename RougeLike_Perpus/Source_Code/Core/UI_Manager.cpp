@@ -33,8 +33,7 @@ UI_Manager::UI_Manager(Asset_Manager* asset, int32_t lebar_layar, int32_t tinggi
 	//tombol crud
 	btn_tambah = new Button({ 90, 620 }, mulai_b, 1.1f);
 	btn_hapus = new Button({ 220, 620 }, red_b, 1.1f);
-	btn_show = new Button({ 90, 700 }, mulai_b, 1.1f);
-	btn_update = new Button({ 220, 700 }, yellow_b, 1.1f);
+	btn_update = new Button({ 150, 700 }, yellow_b, 1.1f);
 
 	//tombol sort,search,dan undo
 	btn_sort = new Button({ 600, 720 }, mulai_b, 1.1f);
@@ -46,9 +45,9 @@ UI_Manager::UI_Manager(Asset_Manager* asset, int32_t lebar_layar, int32_t tinggi
 	btn_kembalikan = new Button({ 150, 500 }, gray_b, 1.1f);
 
 	//input lokasi
-	i_judul = new Text_Box({ 25, 60, 240, 40 }, 15, false);
-	i_id = new Text_Box({ 25, 150, 240, 40 }, 4, true);
-	i_pengarang = new Text_Box({ 25, 240, 240, 40 }, 15, false);
+	i_judul = new Text_Box({ 30, 60, 250, 35 }, 15, false);
+	i_id = new Text_Box({ 30, 150, 250, 35 }, 4, true);
+	i_pengarang = new Text_Box({ 30, 240, 250, 35 }, 15, false);
 	
 }
 
@@ -59,7 +58,6 @@ UI_Manager::~UI_Manager() {
 	//hapus crud button dari memori
 	delete btn_tambah;
 	delete btn_hapus;
-	delete btn_show;
 	delete btn_update;
 
 	//hapus sort, search, dan undo
@@ -90,9 +88,6 @@ AKSI_UI UI_Manager::Update_UI_CRUD() {
 	}
 	if (btn_hapus->Update_Button()) {
 		return AKSI_UI::HAPUS_DATA;
-	}
-	if (btn_show->Update_Button()) {
-		return AKSI_UI::SHOW_DATA;
 	}
 	if (btn_update->Update_Button()) {
 		return AKSI_UI::UPDATE_DATA;
@@ -167,13 +162,13 @@ void UI_Manager::DrawMenu() {
 	DrawTextEx(mtfont, "Mulai", origin_play, 60, 2, WHITE);
 
 	Vector2 origin_judul = {
-		40,
+		90,
 		100
 	};
 	DrawTextEx(mtfont, "Random", origin_judul, 240, 2, WHITE);
 
 	Vector2 origin_judul2 = {
-		800,
+		850,
 		300
 	};
 	DrawTextEx(mtfont, "Play", origin_judul2, 240, 2, WHITE);
@@ -189,20 +184,21 @@ void UI_Manager::DrawMenu() {
 }
 
 
-void UI_Manager::DrawGameplay() {
+void UI_Manager::DrawGameplay(int32_t jml_visualcard, int32_t jml_library, int32_t jml_pinjam) {
 	//shadow stack_caerd
 	Rectangle shadow_stack_card = {
-		1080.0f,
+		1110.0f,
 		580.0f,
 		120.0f,
 		153.0f
 	};
 	DrawRectangleRounded(shadow_stack_card, 0.2f, 8, Fade(BLACK, 0.1f));
 	Vector2 origin_stack_card = {
-		1120,
+		1140,
 		740
 	};
-	DrawTextEx(mtfont, "24/24", origin_stack_card, 20, 2, WHITE);
+	const char* text_library = TextFormat("%d/24", jml_library);
+	DrawTextEx(mtfont, text_library, origin_stack_card, 20, 2, WHITE);
 
 	//shadow
 	Rectangle shadow_card = {
@@ -216,7 +212,8 @@ void UI_Manager::DrawGameplay() {
 		710,
 		660
 	};
-	DrawTextEx(mtfont, "8/8", origin_shadow, 20, 2, WHITE);
+	const char* text_visual = TextFormat("%d/8", jml_visualcard);
+	DrawTextEx(mtfont, text_visual, origin_shadow, 20, 2, WHITE);
 
 	Rectangle board_up = {
 		350.0f,
@@ -229,7 +226,8 @@ void UI_Manager::DrawGameplay() {
 		590,
 		160
 	};
-	DrawTextEx(mtfont, "4/4", origin_board_up, 20, 2, WHITE);
+	const char* text_pinjam = TextFormat("%d/4", jml_pinjam);
+	DrawTextEx(mtfont, text_pinjam, origin_board_up, 20, 2, WHITE);
 
 
 	Rectangle board_up_right = {
@@ -274,13 +272,9 @@ void UI_Manager::DrawGameplay() {
 		btn_hapus->Draw_Button();
 		DrawTextEx(mtfont, "Hapus", { 190, 600 }, 30, 2, WHITE);
 	}
-	if (btn_show != nullptr) {
-		btn_show->Draw_Button();
-		DrawTextEx(mtfont, "Show", { 45, 680 }, 30, 2, WHITE);
-	}
 	if (btn_update != nullptr) {
 		btn_update->Draw_Button();
-		DrawTextEx(mtfont, "Update", { 190, 680 }, 30, 2, WHITE);
+		DrawTextEx(mtfont, "Update", { 110, 680 }, 30, 2, WHITE);
 	}
 
 	//sort, search, dan undo
@@ -331,8 +325,8 @@ void UI_Manager::DrawLibrary() {
 	};
 	DrawRectangleRounded(shadow_stack_card, 0.2f, 8, Fade(BLACK, 0.1f));
 	Vector2 origin_library = {
-		200,
-		400
+		370,
+		600
 	};
-	DrawTextEx(mtfont, "yang nantinya memnuclkan semua kartu", origin_library, 60, 2, WHITE);
+	DrawTextEx(mtfont, "Tekan Tab Untuk Kembali", origin_library, 60, 2, WHITE);
 }

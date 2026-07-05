@@ -25,6 +25,7 @@ public:
 	bool b_hover;
 	bool b_tertarik;
 	bool b_burning;
+	bool b_toggle;
 	float progerss_hancur;
 
 	void Update_Card();
@@ -32,6 +33,6 @@ public:
 	void Burn();
 
 private:
-	float ukuran_lebar = 200.0f;
-	float ukuran_tinggi = 200.0f;
+	float ukuran_lebar = 180.0f;
+	float ukuran_tinggi = 180.0f;
 };

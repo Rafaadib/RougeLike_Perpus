@@ -79,11 +79,14 @@ private:
 	Queue slot_pinjam;
 
 	//array dan structnya
-	Buku data_buku[24];
+	Card* library_card[24];
 	int32_t jumlah_buku_tersimpan = 0;
 
 	Card* visual_card[8];
 	int32_t jumlah_buku_visual = 0;
+
+	Card* kartu_ditemukan = nullptr;
+	bool b_pencarian = false;
 
 
 };

@@ -28,12 +28,12 @@ public:
 	~UI_Manager();
 
 	void DrawMenu();
-	void DrawGameplay();
+	void DrawGameplay(int32_t jml_visualcard, int32_t jml_library, int32_t jml_pinjam);
 	void DrawLibrary(); 
 
 	//buton untuk CRUD
+	//show nya klik kartu
 	Button* btn_tambah;
-	Button* btn_show;
 	Button* btn_update;
 	Button* btn_hapus;
 	

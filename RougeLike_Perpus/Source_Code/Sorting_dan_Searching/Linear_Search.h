@@ -1,3 +1,4 @@
+
 #pragma once
 
 #include "Struct_dan_Array/Buku.h"
@@ -12,7 +13,7 @@ public:
         int32_t target_id
     );
 
-    static int32_t Cari_Berdasarkan_Pengarang(
+    static int32_t Cari_Berdasarkan_Judul(
         Buku data_buku[],
         int32_t jumlah_buku,
         std::string judul
