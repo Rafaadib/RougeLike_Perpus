@@ -210,6 +210,13 @@ void GameManager::Update() {
 
 			//crud
 			AKSI_UI aksi_crud = UI->Update_UI_CRUD();
+			if (aksi_crud == AKSI_UI::TAMBAH_DATA || aksi_crud == AKSI_UI::HAPUS_DATA || aksi_crud == AKSI_UI::UPDATE_DATA) {
+				if (kartu_ditemukan != nullptr) {
+					delete kartu_ditemukan;
+					kartu_ditemukan = nullptr;
+					b_pencarian = false;
+				}
+			}
 			if (aksi_crud == AKSI_UI::TAMBAH_DATA) {
 				//cek inputan apakah kosong
 				if (UI->i_id->text.empty() || UI->i_judul->text.empty() || UI->i_pengarang->text.empty()) {
@@ -260,7 +267,7 @@ void GameManager::Update() {
 						node_card.Hapus_Dari_Layar(id_hapus);
 						perpus_data.Hapus_Buku(id_hapus);
 
-						for (int32_t k = i; k < jumlah_buku_visual; k++) {
+						for (int32_t k = i + 1; k < jumlah_buku_visual; k++) {
 							if ((visual_card[k] != nullptr && visual_card[k]->data != nullptr)) {
 								visual_card[k]->data = visual_card[k]->data - 1;
 							}
@@ -331,11 +338,31 @@ void GameManager::Update() {
 					std::cout << "[WARNING] Klik Dulu Wak" << std::endl;
 				}
 			}
+			
 
 			//search, sort, undo
 			AKSI_UI aksi_sus = UI->Update_UI_SUS();
 			if (aksi_sus == AKSI_UI::SORT) {
 				//logika sorting
+				//soritng nya lansgung se librabry
+				if (perpus_data.jumlah_buku == 0) {
+					std::cout << "[WARNING] Perpus Kosong wak!" << std::endl;
+				}
+				else {
+					//fungsi dari class buuble short
+					//urutu bedasra id
+					Bubble_Sort::Urutkan_Berdasarkan_Id(perpus_data.data_buku, perpus_data.jumlah_buku);
+					for (int32_t i = 0; i < jumlah_buku_visual; i++) {
+						if (visual_card[i] != nullptr) {
+							visual_card[i]->data = &perpus_data.data_buku[i];
+
+							//visual sedkit
+							visual_card[i]->rotasi += 5.0f;
+						}
+					}
+					std::cout << "[SUCCES] Soerting Berhasil" << std::endl;
+				}
+
 			}
 			else if (aksi_sus == AKSI_UI::UNDO) {
 				//logika undo

@@ -12,12 +12,12 @@ uniform float uDissolve;    // Nilai progress pembakaran (0.0f s/d 1.0f)
 
 #define PIXEL_RESOLUTION vec2(160.0, 240.0) //untuk efect sdkiti pixel
 
-// 1. Fungsi Generator Angka Acak Dasar
+//Fungsi Generator Angka Acak Dasar
 float hash(vec2 p) {
     return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453123);
 }
 
-// 2. Smooth Value Noise (Menghaluskan transisi antar titik)
+//Smooth Value Noise (Menghaluskan transisi antar titik)
 float noise(vec2 p) {
     vec2 i = floor(p);
     vec2 f = fract(p);
@@ -35,7 +35,7 @@ float noise(vec2 p) {
     return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
 }
 
-// 3. FBM (Fractal Brownian Motion) untuk tekstur organik berlapis
+//FBM (Fractal Brownian Motion) untuk tekstur organik berlapis
 float fbm(vec2 p) {
     float value = 0.0;
     float amplitude = 0.5;

@@ -45,7 +45,7 @@ void main()
     texColor.rgb *= vignette;
 
     // PHOSPHOR GLOW TWEAK (Opsional: Membuat warna sedikit lebih 'retro')
-    texColor.g *= 1.05; // Naikkan warna hijau sedikit ala monitor jadul
+    texColor.g *= 1.05; // Naikkan warna hijau sedikit ala 
     texColor.b *= 1.02; // Naikkan warna biru sedikit
 
     finalColor = texColor * fragColor;
