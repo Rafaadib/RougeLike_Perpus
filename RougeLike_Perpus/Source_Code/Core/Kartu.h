@@ -22,6 +22,8 @@ public:
 	float rotasi;
 	float base_rotasi;
 
+	float getar;
+
 	bool b_hover;
 	bool b_tertarik;
 	bool b_burning;

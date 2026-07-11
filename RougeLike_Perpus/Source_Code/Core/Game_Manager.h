@@ -76,7 +76,10 @@ private:
 	Perpus perpus_data;
 	Linked_List node_card;
 	Stack riwayat_hapus;
-	Queue slot_pinjam;
+
+	//fitur pinjam
+	Queue queue_pinjam;
+	Card* visual_pinjam[4];
 
 	//array dan structnya
 	Card* library_card[24];

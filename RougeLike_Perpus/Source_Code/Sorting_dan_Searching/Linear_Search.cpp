@@ -1,10 +1,6 @@
 #include "Linear_Search.h"
 
-int32_t Linear_Search::Cari_Berdasarkan_Id(
-    Buku data_buku[],
-    int32_t jumlah_buku,
-    int32_t target_id
-) {
+int32_t Linear_Search::Cari_Berdasarkan_Id(Buku data_buku[], int32_t jumlah_buku, int32_t target_id) {
     std::cout << "\n[SUCCES] Mencari Buku Dengan Id: "
               << target_id << std::endl;
 
@@ -27,11 +23,7 @@ int32_t Linear_Search::Cari_Berdasarkan_Id(
     return -1;
 }
 
-int32_t Linear_Search::Cari_Berdasarkan_Judul(
-    Buku data_buku[],
-    int32_t jumlah_buku,
-    std::string judul
-) {
+int32_t Linear_Search::Cari_Berdasarkan_Judul(Buku data_buku[], int32_t jumlah_buku, std::string judul) {
     std::cout << "\n[SUCCES] Mencari Buku Dengan Judul: "
               << judul << std::endl;
 

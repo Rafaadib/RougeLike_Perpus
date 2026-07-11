@@ -38,6 +38,15 @@ void Card::Update_Card() {
 
 	b_hover = CheckCollisionPointRec(GetMousePosition(), hit_box);
 
+	if (getar > 0.0f) {
+		getar -= GetFrameTime(); // waktu dikurangi
+		//set getarnya
+		posisi_sekarang.x = base_posisi.x + sin(GetTime() * 60.0f) * 5.0f;
+	}
+	else {
+		posisi_sekarang.x = Lerp(posisi_sekarang.x, base_posisi.x, 0.1f);
+	}
+
 	//animasi
 	float waktu = GetTime() + (base_posisi.x, 0.03f);
 	float idle_rotasi = base_rotasi + (sin(waktu * 2.0f) * 3.0f);

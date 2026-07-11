@@ -323,10 +323,10 @@ void UI_Manager::DrawLibrary() {
 		1225.0f,
 		740.0f
 	};
-	DrawRectangleRounded(shadow_stack_card, 0.2f, 8, Fade(BLACK, 0.1f));
+	DrawRectangleRounded(shadow_stack_card, 0.1f, 8, Fade(BLACK, 0.1f));
 	Vector2 origin_library = {
 		370,
-		600
+		680
 	};
 	DrawTextEx(mtfont, "Tekan Tab Untuk Kembali", origin_library, 60, 2, WHITE);
 }

@@ -9,12 +9,12 @@
 #include "Kartu.h"
 
 
-
 GameManager::GameManager(const uint32_t lebar_layar, const uint32_t tinggi_layar, const char* judul)
 	: lebar_layar(lebar_layar), tinggi_layar(tinggi_layar) {
 
 	/*SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_VSYNC_HINT);*/
 	InitWindow(lebar_layar, tinggi_layar, judul);
+	SetTargetFPS(240);
 
 	Asset = new Asset_Manager();
 	UI = new UI_Manager(Asset, lebar_layar, tinggi_layar);
@@ -251,49 +251,56 @@ void GameManager::Update() {
 				}
 			}
 			else if (aksi_crud == AKSI_UI::HAPUS_DATA) {
-				bool ada_yang_dihapus = false;
-
-				// Cari kartu mana yang sedang berstatus TERPILIH (Menonjol)
-				for (int32_t i = 0; i < jumlah_buku_visual; i++) {
-
-					if (visual_card[i]->b_toggle && visual_card[i]->data != nullptr) {
-
-						int32_t id_hapus = visual_card[i]->data->id;
-
-						//Amankan salinan data murni ke Stack (Riwayat Undo)
-						riwayat_hapus.Push(*(visual_card[i]->data));
-
-						//Hapus dari Linked List dan Array Database
-						node_card.Hapus_Dari_Layar(id_hapus);
-						perpus_data.Hapus_Buku(id_hapus);
-
-						for (int32_t k = i + 1; k < jumlah_buku_visual; k++) {
-							if ((visual_card[k] != nullptr && visual_card[k]->data != nullptr)) {
-								visual_card[k]->data = visual_card[k]->data - 1;
-							}
-						}
-
-						//Putuskan pointer data dari visual kartu!
-						visual_card[i]->data = nullptr;
-
-						//Picu animasi shader terbakar
-						visual_card[i]->Burn();
-
-						ada_yang_dihapus = true;
-						std::cout << "[SUCCESS] Buku ID " << id_hapus << " Dihapus!" << std::endl;
-
-						// Hentikan pencarian karena kartu sudah ketemu dan dihapus
-						break;
-					}
+				//logika hapus
+				//cek dulu apakah ada antrian
+				if (queue_pinjam.jumlah > 0) {
+					std::cout << "[WARNING] Saat antrian pinjam tida dapat hapus" << std::endl;
 				}
+				else {
+					bool ada_yang_dihapus = false;
 
-				// Jika tombol Hapus ditekan tapi tidak ada kartu yang sedang diklik/menonjol
-				if (!ada_yang_dihapus) {
-					std::cout << "[WARNING] klik dulu wak!" << std::endl;
+					// Cari kartu mana yang sedang berstatus TERPILIH (Menonjol)
+					for (int32_t i = 0; i < jumlah_buku_visual; i++) {
+
+						if (visual_card[i]->b_toggle && visual_card[i]->data != nullptr) {
+
+							int32_t id_hapus = visual_card[i]->data->id;
+
+							//Amankan salinan data murni ke Stack (Riwayat Undo)
+							riwayat_hapus.Push(*(visual_card[i]->data));
+
+							//Hapus dari Linked List dan Array Database
+							node_card.Hapus_Dari_Layar(id_hapus);
+							perpus_data.Hapus_Buku(id_hapus);
+
+							for (int32_t k = i + 1; k < jumlah_buku_visual; k++) {
+								if ((visual_card[k] != nullptr && visual_card[k]->data != nullptr)) {
+									visual_card[k]->data = visual_card[k]->data - 1;
+								}
+							}
+
+							//Putuskan pointer data dari visual kartu!
+							visual_card[i]->data = nullptr;
+
+							//Picu animasi shader terbakar
+							visual_card[i]->Burn();
+
+							ada_yang_dihapus = true;
+							std::cout << "[SUCCESS] Buku ID " << id_hapus << " Dihapus!" << std::endl;
+
+							// Hentikan pencarian karena kartu sudah ketemu dan dihapus
+							break;
+						}
+					}
+
+					// Jika tombol Hapus ditekan tapi tidak ada kartu yang sedang diklik/menonjol
+					if (!ada_yang_dihapus) {
+						std::cout << "[WARNING] klik dulu wak!" << std::endl;
+					}
 				}
 			}
 			else if (aksi_crud == AKSI_UI::SHOW_DATA) {
-				//logika urutkan
+				//logika tampilakn
 			}
 			else if (aksi_crud == AKSI_UI::UPDATE_DATA) {
 				//logika update
@@ -435,9 +442,59 @@ void GameManager::Update() {
 			AKSI_UI aksi_pk = UI->Update_UI_PK();
 			if (aksi_pk == AKSI_UI::PINJAM) {
 				//logika pinjam
+				for (int32_t i = 0; i < jumlah_buku_visual; i++) {
+
+					// Jika kartu di meja terpilih
+					if (visual_card[i]->b_toggle && visual_card[i]->data != nullptr) {
+
+						// Cek kapasitas antrean (maks 4)
+						if (queue_pinjam.jumlah < 4) {
+							Buku* buku_target = visual_card[i]->data;
+
+							//masukan data ke queue
+							queue_pinjam.EnQueue(buku_target);
+
+							int32_t index_antrian = queue_pinjam.jumlah - 1;
+							float pos_x = 420.0f + (index_antrian * 180.0f);
+							visual_pinjam[index_antrian] = new Card({ pos_x, 90.0f }, buku_target, 0.0f);
+
+							//putuskan data linkedlistnya
+							visual_card[i]->data = nullptr;
+							visual_card[i]->Burn();
+							
+						}
+						break;
+					}
+				}
+
 			}
 			else if (aksi_pk == AKSI_UI::KEMBALIKAN) {
 				//logika pinjam
+				if (queue_pinjam.jumlah > 0 && visual_pinjam[0]->b_toggle) {
+					Buku* buku_kembali = queue_pinjam.DeQueue();
+
+					//bersihan yang terdepan
+					delete visual_pinjam[0];
+
+					for (int32_t i = 0; i < queue_pinjam.jumlah; i++) {
+						visual_pinjam[i] = visual_pinjam[i + 1];
+						visual_pinjam[i]->base_posisi.x -= 105.0f;
+					}
+					visual_pinjam[queue_pinjam.jumlah] = nullptr; //ujung nya diksooginn
+
+					if (jumlah_buku_visual < 8) {
+						node_card.Tambah_Ke_Layar(buku_kembali);
+						float pos_x = 380.0f + (jumlah_buku_visual * 95.0f);
+						float rotasi_baru = -10.0f + (jumlah_buku_visual * 2.0f);
+
+						visual_card[jumlah_buku_visual] = new Card({ pos_x, 555 }, buku_kembali, rotasi_baru);
+						visual_card[jumlah_buku_visual]->b_toggle = false;
+						jumlah_buku_visual++;
+					}
+				}
+				else if(queue_pinjam.jumlah > 0) {
+					std::cout << "[WARNING] klik kartu paling ujung untuk mengbalikan!" << std::endl;
+				}
 			}
 
 
@@ -460,18 +517,40 @@ void GameManager::Update() {
 
 					//ambil data dari library untuk di tampilkan
 					if (jumlah_buku_visual < 8 && perpus_data.jumlah_buku > jumlah_buku_visual ) {
-						Buku* buku_cadangan = &perpus_data.data_buku[jumlah_buku_visual];
+						Buku* buku_cadangan = nullptr;
 
-						node_card.Tambah_Ke_Layar(buku_cadangan);
+						// Cari buku pertama di gudang yang BELUM ada di meja dan TIDAK sedang dipinjam
+						for (int32_t b = 0; b < perpus_data.jumlah_buku; b++) {
+							bool sudah_di_meja = false;
 
-						float pos_x = 380.0f + (jumlah_buku_visual * 95.0f);
-						float rotasi_baru = -10.0f + (jumlah_buku_visual * 2.0f);
+							// Cek apakah buku ini sudah mejeng di meja
+							for (int32_t v = 0; v < jumlah_buku_visual; v++) {
+								if (visual_card[v]->data != nullptr && visual_card[v]->data->id == perpus_data.data_buku[b].id) {
+									sudah_di_meja = true;
+									break;
+								}
+							}
 
-						visual_card[jumlah_buku_visual] = new Card({pos_x , 555}, buku_cadangan, rotasi_baru);
-						visual_card[jumlah_buku_visual]->b_toggle = false;
+							// Jika belum ada di meja dan statusnya b_tersedia == true
+							if (!sudah_di_meja && perpus_data.data_buku[b].b_tersedia) {
+								buku_cadangan = &perpus_data.data_buku[b];
+								break; // Ketemu! Hentikan pencarian
+							}
+						}
 
-						jumlah_buku_visual++;
-						std::cout << "[INFO] Buku Dari Library Ditambahakn " << std::endl;
+						// Jika ketemu buku yang cocok, munculkan di meja
+						if (buku_cadangan != nullptr) {
+							node_card.Tambah_Ke_Layar(buku_cadangan);
+
+							float pos_x = 380.0f + (jumlah_buku_visual * 95.0f);
+							float rotasi_baru = -10.0f + (jumlah_buku_visual * 2.0f);
+
+							visual_card[jumlah_buku_visual] = new Card({ pos_x , 555 }, buku_cadangan, rotasi_baru);
+							visual_card[jumlah_buku_visual]->b_toggle = false;
+
+							jumlah_buku_visual++;
+							std::cout << "[INFO] Buku baru ditarik dari gudang!" << std::endl;
+						}
 					}
 
 
@@ -510,6 +589,26 @@ void GameManager::Update() {
 					kartu_ditemukan = nullptr;
 					b_pencarian = false;
 					std::cout << "[INFO] Pencarian Berhenti" << std::endl;
+				}
+			}
+
+			//antrian loop
+			for (int32_t i = 0; i < queue_pinjam.jumlah; i++) {
+				visual_pinjam[i]->Update_Card();
+
+				if (visual_pinjam[i]->b_hover && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+					//hanya kartu index pertama yang bisa di klik
+					if (i == 0) {
+						bool b_terpilih = visual_pinjam[0]->b_toggle; //hanya index eprtama
+						for (int32_t k = 0; k < queue_pinjam.jumlah; k++) {
+							visual_pinjam[k]->b_toggle = false;
+						}
+
+						visual_pinjam[0]->b_toggle = !b_terpilih;
+					}
+					else {
+						visual_pinjam[i]->getar = 0.3f;
+					}
 				}
 			}
 
@@ -585,8 +684,8 @@ void GameManager::Draw() {
 				EndShaderMode();
 
 				//shadow card
-				int32_t jumlah_di_pinjam = 0; //sementara
-				UI->DrawGameplay(jumlah_buku_visual, perpus_data.jumlah_buku, jumlah_di_pinjam);
+				//int32_t jumlah_di_pinjam = 0; //sementara
+				UI->DrawGameplay(jumlah_buku_visual, perpus_data.jumlah_buku, queue_pinjam.jumlah);
 
 
 				// render kartu atau buku
@@ -594,7 +693,8 @@ void GameManager::Draw() {
 				Texture2D back_card = Asset->Get_Texture("back");
 
 				Shader burn = Asset->Get_Shader("burn");
-					
+				
+				//render 8 kartu dan libary
 				for (int32_t i = 0; i < jumlah_buku_visual; i++) {
 						visual_card[i]->Draw_Card(burn, kartu_tex, font);
 				}
@@ -610,6 +710,13 @@ void GameManager::Draw() {
 					const char* instruksi = "Klik kartu untuk menutup";
 					int lebar_teks = MeasureText(instruksi, 20);
 					DrawText(instruksi, 710 - (lebar_teks / 2), 430, 20, LIGHTGRAY);
+				}
+
+				//render kartu pinjam 
+				for (int32_t i = 0; i < queue_pinjam.jumlah; i++) {
+					if (visual_pinjam[i] != nullptr) {
+						visual_pinjam[i]->Draw_Card(burn, kartu_tex, font);
+					}
 				}
 
 				break;
@@ -640,6 +747,7 @@ void GameManager::Draw() {
 			}
 		}
 
+		//logika transisi state
 		if (b_transisi || progress_transisi > 0.0f) {
 			Shader burn_transisi = Asset->Get_Shader("burn");
 

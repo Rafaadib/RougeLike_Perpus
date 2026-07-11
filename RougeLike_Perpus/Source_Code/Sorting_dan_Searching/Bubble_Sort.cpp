@@ -1,12 +1,8 @@
 #include "Bubble_Sort.h"
 
 // stactic class
-void Bubble_Sort::Urutkan_Berdasarkan_Id(
-    Buku data_buku[],
-    int32_t jumlah_buku
-) {
-    std::cout << "\n[SUCCESS] Memulai Proses Sorting Berdasakan ID.."
-              << std::endl;
+void Bubble_Sort::Urutkan_Berdasarkan_Id(Buku data_buku[],int32_t jumlah_buku) {
+    std::cout << "\n[SUCCESS] Memulai Proses Sorting Berdasakan ID.." << std::endl;
 
     // pakai nested loop
     for (int32_t i = 0; i < jumlah_buku - 1; i++) {
@@ -20,6 +16,5 @@ void Bubble_Sort::Urutkan_Berdasarkan_Id(
         }
     }
 
-    std::cout << "[SUCCES] Data Berhasil Di Urutkan Berdasarkan ID"
-              << std::endl;
+    std::cout << "[SUCCES] Data Berhasil Di Urutkan Berdasarkan ID" << std::endl;
 }
