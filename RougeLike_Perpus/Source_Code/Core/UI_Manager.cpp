@@ -173,6 +173,17 @@ void UI_Manager::DrawMenu() {
 	};
 	DrawTextEx(mtfont, "Play", origin_judul2, 240, 2, WHITE);
 
+	Vector2 version_acc = {
+		20,
+		20
+	};
+	DrawTextEx(mtfont, "Version K10. 1.0.0", version_acc, 30, 2, WHITE);
+
+	Vector2 poweredby= {
+		1050,
+		720
+	};
+	DrawTextEx(mtfont, "PoweredBy K10", poweredby, 30, 2, WHITE);
 	/*const char* judul = "Perpus Game";
 	const char* intruksi = "Mulai";
 
@@ -194,7 +205,7 @@ void UI_Manager::DrawGameplay(int32_t jml_visualcard, int32_t jml_library, int32
 	};
 	DrawRectangleRounded(shadow_stack_card, 0.2f, 8, Fade(BLACK, 0.1f));
 	Vector2 origin_stack_card = {
-		1140,
+		1150,
 		740
 	};
 	const char* text_library = TextFormat("%d/24", jml_library);
@@ -216,27 +227,27 @@ void UI_Manager::DrawGameplay(int32_t jml_visualcard, int32_t jml_library, int32
 	DrawTextEx(mtfont, text_visual, origin_shadow, 20, 2, WHITE);
 
 	Rectangle board_up = {
-		350.0f,
-		20.0f,
-		480.0f,
+		500.0f,
+		40.0f,
+		520.0f,
 		140.0f
 	};
 	DrawRectangleRounded(board_up, 0.2f, 8, Fade(BLACK, 0.1f));
 	Vector2 origin_board_up = {
-		590,
-		160
+		730,
+		200
 	};
-	const char* text_pinjam = TextFormat("%d/4", jml_pinjam);
+	const char* text_pinjam = TextFormat("pinjam %d/4", jml_pinjam);
 	DrawTextEx(mtfont, text_pinjam, origin_board_up, 20, 2, WHITE);
 
 
-	Rectangle board_up_right = {
+	/*Rectangle board_up_right = {
 		960.0f,
 		20.0f,
 		280.0f,
 		140.0f
 	};
-	DrawRectangleRounded(board_up_right, 0.2f, 8, Fade(BLACK, 0.1f));
+	DrawRectangleRounded(board_up_right, 0.2f, 8, Fade(BLACK, 0.1f));*/
 
 	//mleft menu
 	Rectangle left_menu = {
@@ -247,6 +258,16 @@ void UI_Manager::DrawGameplay(int32_t jml_visualcard, int32_t jml_library, int32
 	};
 	DrawRectangleRounded(left_menu, 0.2f, 8, Fade(DARKGRAY, 0.5f));
 	DrawRectangleRoundedLinesEx(left_menu, 0.2f, 8, 3.5f,Fade(GOLD, 0.6f));
+
+	//shadow button
+	Rectangle button_shadow = {
+		15.0f,
+		580.0f,
+		280.0f,
+		200.0f
+	};
+	DrawRectangleRounded(button_shadow, 0.1f, 8, Fade(BLACK, 0.2f));
+
 
 	//input judul
 	Texture2D input = asset_manager->Get_Texture("input");
@@ -324,6 +345,7 @@ void UI_Manager::DrawLibrary() {
 		740.0f
 	};
 	DrawRectangleRounded(shadow_stack_card, 0.1f, 8, Fade(BLACK, 0.1f));
+	DrawRectangleRoundedLinesEx(shadow_stack_card, 0.1f, 8, 5.0f, Fade(GOLD, 0.6f));
 	Vector2 origin_library = {
 		370,
 		680

@@ -67,7 +67,7 @@ GameManager::~GameManager() {
 		delete kartu_ditemukan;
 	}
 	
-
+	//hapus asset dari memory
 	UnloadAsset();
 	delete Asset;
 	delete UI;
@@ -390,6 +390,7 @@ void GameManager::Update() {
 						if (jumlah_buku_visual < 8) {
 							Buku* ref_buku_baru = &perpus_data.data_buku[perpus_data.jumlah_buku - 1];
 
+							//tapilkanya mengugnakan linked list
 							node_card.Tambah_Ke_Layar(ref_buku_baru);
 							float pos_x = 380.0f + (jumlah_buku_visual * 95.0f);
 							float rotasi_baru = -10.0f + (jumlah_buku_visual * 2.0f);
@@ -455,8 +456,8 @@ void GameManager::Update() {
 							queue_pinjam.EnQueue(buku_target);
 
 							int32_t index_antrian = queue_pinjam.jumlah - 1;
-							float pos_x = 420.0f + (index_antrian * 180.0f);
-							visual_pinjam[index_antrian] = new Card({ pos_x, 90.0f }, buku_target, 0.0f);
+							float pos_x = 580.0f + (index_antrian * 120.0f);
+							visual_pinjam[index_antrian] = new Card({ pos_x, 110.0f }, buku_target, 0.0f);
 
 							//putuskan data linkedlistnya
 							visual_card[i]->data = nullptr;

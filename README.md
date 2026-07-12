@@ -7,8 +7,12 @@ update bnyak
 untuk dokumentasi gamabr nyusul
 
 # Tentang Project
-gunain c++
+gunain c++ dan raylib
 
 # GamePlay
-![Menu](menu.png)
+![Menu](state1.png)
+![Gameplay](state2.png)
+![Library](state3.png)
+
+
 

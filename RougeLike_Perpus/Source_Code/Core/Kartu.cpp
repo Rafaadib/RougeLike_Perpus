@@ -56,10 +56,10 @@ void Card::Update_Card() {
 		ukuran_target = 1.1f;
 
 		rotasi = base_rotasi + sin(GetTime() * 15.0f) * 5.0f;
-		posisi_sekarang.y = Lerp(posisi_sekarang.y, base_posisi.y - 45.0f, 0.1f);
+		posisi_sekarang.y = Lerp(posisi_sekarang.y, base_posisi.y - 30.0f, 0.1f);
 	}
 	else if (b_hover && !b_burning) {
-		ukuran_target = 1.05f;
+		ukuran_target = 1.0f;
 
 		rotasi = base_rotasi + sin(GetTime() * 15.0f) * 5.0f;
 		posisi_sekarang.y = Lerp(posisi_sekarang.y, base_posisi.y - 15.0f, 0.1f);
