@@ -423,17 +423,26 @@ void GameManager::Update() {
 
 					//jika ketemu
 					if (indek_ketemu != -1) {
-						if (kartu_ditemukan != nullptr) {
-							delete kartu_ditemukan;
+						//cek apakah buku inni sedang dipinjam atau tidak
+						if (!perpus_data.data_buku[indek_ketemu].b_tersedia) {
+							std::cout << "[INFO] Buku " << perpus_data.data_buku[indek_ketemu].judul << " Sedang Dipinjam!" << std::endl;
 						}
+						else {
+							if (kartu_ditemukan != nullptr) {
+								delete kartu_ditemukan;
+							}
 
-						kartu_ditemukan = new Card({ 710.0f, 320.0f }, &perpus_data.data_buku[indek_ketemu], 0.0f);
-						b_pencarian = true;
+							kartu_ditemukan = new Card({ 710.0f, 320.0f }, &perpus_data.data_buku[indek_ketemu], 0.0f);
+							b_pencarian = true;
 
-						//kosongkan setealh diisi
-						UI->i_id->text = "";
-						UI->i_judul->text = "";
-						UI->i_pengarang->text = "";
+							//kosongkan setealh diisi
+							UI->i_id->text = "";
+							UI->i_judul->text = "";
+							UI->i_pengarang->text = "";
+
+							std::cout << "[SUCCESS] Buku DItemukan" << std::endl;
+						}
+						
 					}
 
 				}

@@ -32,7 +32,7 @@ void Card::Update_Card() {
 	Rectangle hit_box = {
 		posisi_sekarang.x - (ukuran_lebar * ukuran_sekarang) / 2.0f,
 		posisi_sekarang.y - (ukuran_tinggi * ukuran_sekarang) / 2.0f,
-		(ukuran_lebar  - 120.0f) * ukuran_sekarang,
+		(ukuran_lebar  - 50.0f) * ukuran_sekarang,
 		ukuran_tinggi * ukuran_sekarang
 	};
 
