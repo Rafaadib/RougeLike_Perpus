@@ -168,6 +168,7 @@ void GameManager::Update() {
 			SetShaderValue(shader, timeloc, &total_time, SHADER_UNIFORM_FLOAT);
 
 			//klik tumpukan
+			//logika show
 			Rectangle deck_hitbox = {
 				1110.0f,
 				570.0f,
