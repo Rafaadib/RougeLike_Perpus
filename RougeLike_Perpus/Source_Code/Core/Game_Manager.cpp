@@ -231,24 +231,40 @@ void GameManager::Update() {
 					std::string judul_baru = UI->i_judul->text;
 					std::string penagrang_baru = UI->i_pengarang->text;
 
-					perpus_data.Tambah_Buku(id_baru, judul_baru, penagrang_baru);
-					if (jumlah_buku_visual < 8) {
-						//menghubungkan ke linkedlist
-						Buku* buku_baru = &perpus_data.data_buku[perpus_data.jumlah_buku - 1];
-						node_card.Tambah_Ke_Layar(buku_baru);
-
-						float pos_x = 380.0f + (jumlah_buku_visual * 95.0f);
-						visual_card[jumlah_buku_visual] = new Card({ pos_x, 555 }, buku_baru, 0.0f);
-						visual_card[jumlah_buku_visual]->b_toggle = false;
-						jumlah_buku_visual++;
+					//loping apakah ada data yang terduplikat
+					bool b_duplikat = false;
+					for (int32_t i = 0; i < perpus_data.jumlah_buku; i++) {
+						if (perpus_data.data_buku[i].id == id_baru || perpus_data.data_buku[i].judul == judul_baru) {
+							b_duplikat = true;
+							break;
+						}
 					}
 
-					//kosoongkna inputan
-					UI->i_id->text = "";
-					UI->i_judul->text = "";
-					UI->i_pengarang->text = "";
+					if (b_duplikat) {
+						std::cout << "[WARNING] Buku Sudah Ada!" << std::endl;
+					}
+					else {
+						perpus_data.Tambah_Buku(id_baru, judul_baru, penagrang_baru);
+						if (jumlah_buku_visual < 8) {
+							//menghubungkan ke linkedlist
+							Buku* buku_baru = &perpus_data.data_buku[perpus_data.jumlah_buku - 1];
+							node_card.Tambah_Ke_Layar(buku_baru);
 
-					std::cout << "[SUCCES] Buku Ditambhakan" << std::endl;
+							float pos_x = 380.0f + (jumlah_buku_visual * 95.0f);
+							visual_card[jumlah_buku_visual] = new Card({ pos_x, 555 }, buku_baru, 0.0f);
+							visual_card[jumlah_buku_visual]->b_toggle = false;
+							jumlah_buku_visual++;
+						}
+
+						//kosoongkna inputan
+						UI->i_id->text = "";
+						UI->i_judul->text = "";
+						UI->i_pengarang->text = "";
+
+						std::cout << "[SUCCES] Buku Ditambhakan" << std::endl;
+					}
+
+					
 				}
 			}
 			else if (aksi_crud == AKSI_UI::HAPUS_DATA) {
@@ -270,13 +286,30 @@ void GameManager::Update() {
 							//Amankan salinan data murni ke Stack (Riwayat Undo)
 							riwayat_hapus.Push(*(visual_card[i]->data));
 
+							//gunain id sebagai index pergesran
+							int32_t id_sementara[8];
+							for (int32_t v = 0; v < jumlah_buku_visual; v++) {
+								if (visual_card[v] != nullptr && visual_card[v]->data != nullptr) {
+									id_sementara[v] = visual_card[v]->data->id;
+								}
+								else {
+									id_sementara[v] = -1;
+								}
+							}
+
 							//Hapus dari Linked List dan Array Database
 							node_card.Hapus_Dari_Layar(id_hapus);
 							perpus_data.Hapus_Buku(id_hapus);
 
-							for (int32_t k = i + 1; k < jumlah_buku_visual; k++) {
-								if ((visual_card[k] != nullptr && visual_card[k]->data != nullptr)) {
-									visual_card[k]->data = visual_card[k]->data - 1;
+							//sambungkan kembali pointer
+							for (int32_t k = 0; k < jumlah_buku_visual; k++) {
+								if (k != i && visual_card[k] != nullptr && id_sementara[k] != -1) {
+									for (int32_t b = 0; b < perpus_data.jumlah_buku; b++) {
+										if (perpus_data.data_buku[b].id == id_sementara[k]) {
+											visual_card[k]->data = &perpus_data.data_buku[b];
+											break;
+										}
+									}
 								}
 							}
 
